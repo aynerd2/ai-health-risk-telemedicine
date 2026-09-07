@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-neutral-50 text-neutral-900;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-primary-100 text-primary-900;
+  }
+}
+
+@layer utilities {
+  .auth-backdrop {
+    background-color: theme("colors.neutral.50");
+    background-image:
+      radial-gradient(circle at 15% 20%, theme("colors.primary.100") 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, theme("colors.primary.50") 0%, transparent 45%);
+  }
+}

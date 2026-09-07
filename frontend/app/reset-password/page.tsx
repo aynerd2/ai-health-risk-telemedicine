@@ -1,7 +1,11 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { Field, TextInput } from "@/components/ui/FormField";
+import { AuthCard } from "@/components/shell/AuthCard";
 import { api } from "@/lib/api";
 
 function ResetPasswordForm() {
@@ -29,39 +33,26 @@ function ResetPasswordForm() {
   }
 
   return (
-    <main className="mx-auto max-w-sm px-6 py-20">
-      <h1 className="mb-6 text-2xl font-semibold">Reset password</h1>
+    <AuthCard title="Reset password">
       {done ? (
-        <p className="text-sm text-green-700">Password updated. Redirecting to login...</p>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm font-medium text-success-700">
+          Password updated. Redirecting to login...
+        </motion.p>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            required
-            placeholder="Reset token"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2 font-mono text-xs"
-          />
-          <input
-            type="password"
-            required
-            minLength={8}
-            placeholder="New password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-          >
+          <Field label="Reset token" required>
+            <TextInput required value={token} onChange={(e) => setToken(e.target.value)} className="font-mono text-xs" />
+          </Field>
+          <Field label="New password" required helper="At least 8 characters">
+            <TextInput type="password" required minLength={8} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" />
+          </Field>
+          {error && <p className="text-sm font-medium text-danger-600">{error}</p>}
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Saving..." : "Reset password"}
-          </button>
+          </Button>
         </form>
       )}
-    </main>
+    </AuthCard>
   );
 }
 

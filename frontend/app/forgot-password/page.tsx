@@ -1,7 +1,11 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { Field, TextInput } from "@/components/ui/FormField";
+import { AuthCard } from "@/components/shell/AuthCard";
 import { api } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
@@ -26,46 +30,40 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="mx-auto max-w-sm px-6 py-20">
-      <h1 className="mb-2 text-2xl font-semibold">Forgot password</h1>
-      <p className="mb-6 text-sm text-gray-600">
-        Enter your account email. No email service is configured for this prototype, so the reset link is shown
-        directly below instead of being sent to your inbox.
-      </p>
+    <AuthCard
+      title="Forgot password"
+      subtitle="No email service is configured for this prototype, so the reset token is shown below instead of emailed."
+      footer={
+        <Link href="/login" className="font-medium text-primary-700 hover:underline">
+          ← Back to login
+        </Link>
+      }
+    >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="email"
-          required
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded border border-gray-300 px-3 py-2"
-        />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-        >
+        <Field label="Email" required>
+          <TextInput type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+        </Field>
+        {error && <p className="text-sm font-medium text-danger-600">{error}</p>}
+        <Button type="submit" disabled={loading} className="w-full">
           {loading ? "Requesting..." : "Send reset link"}
-        </button>
+        </Button>
       </form>
 
       {resetToken !== null && (
-        <div className="mt-6 rounded border border-gray-200 p-4 text-sm">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-6 rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm">
           {resetToken ? (
             <>
-              <p className="mb-2 text-gray-600">Reset token (valid for 30 minutes):</p>
-              <p className="mb-3 break-all rounded bg-gray-50 p-2 font-mono text-xs">{resetToken}</p>
-              <Link href={`/reset-password?token=${encodeURIComponent(resetToken)}`} className="text-blue-600 hover:underline">
-                Continue to reset password &rarr;
+              <p className="mb-2 text-neutral-600">Reset token (valid for 30 minutes):</p>
+              <p className="mb-3 break-all rounded-md bg-white px-2.5 py-2 font-mono text-xs text-neutral-700 ring-1 ring-neutral-200">{resetToken}</p>
+              <Link href={`/reset-password?token=${encodeURIComponent(resetToken)}`} className="font-medium text-primary-700 hover:underline">
+                Continue to reset password →
               </Link>
             </>
           ) : (
-            <p className="text-gray-600">If that email is registered, a reset link would have been sent.</p>
+            <p className="text-neutral-600">If that email is registered, a reset link would have been sent.</p>
           )}
-        </div>
+        </motion.div>
       )}
-    </main>
+    </AuthCard>
   );
 }
