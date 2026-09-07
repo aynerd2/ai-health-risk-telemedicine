@@ -94,6 +94,16 @@ export default function RegisterPage() {
           <SelectInput value={role} onChange={(e) => setRole(e.target.value as UserRole)}>
             <option value="patient">Patient</option>
             <option value="doctor">Doctor</option>
+            {/*
+              TEMPORARY — REMOVE AFTER THE FIRST ADMIN IS CREATED.
+              The backend only accepts role="admin" here when zero admin
+              accounts exist yet (see app/routers/auth.py's register()) — so
+              this option stops doing anything the moment that first admin
+              is registered. Leaving it in the dropdown after that isn't a
+              security hole, just UI clutter that shouldn't ship. Delete
+              this <option> once you've registered the one admin account.
+            */}
+            <option value="admin">Admin (temporary — remove after first use)</option>
           </SelectInput>
         </Field>
         {error && <p className="text-sm font-medium text-danger-600">{error}</p>}
