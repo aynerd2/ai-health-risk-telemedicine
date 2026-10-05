@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { Field, SelectInput, TextInput } from "@/components/ui/FormField";
+import { Checkbox, Field, SelectInput, TextInput } from "@/components/ui/FormField";
 import { AuthCard } from "@/components/shell/AuthCard";
 import { api, UserRole } from "@/lib/api";
 
@@ -16,6 +16,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("patient");
+  const [consent, setConsent] = useState(false);
   const [touched, setTouched] = useState({ fullName: false, email: false, password: false });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ export default function RegisterPage() {
   const nameError = touched.fullName && fullName.trim().length === 0 ? "Full name is required" : undefined;
   const emailError = touched.email && email.length > 0 && !EMAIL_RE.test(email) ? "Enter a valid email address" : undefined;
   const passwordError = touched.password && password.length > 0 && password.length < 8 ? "At least 8 characters" : undefined;
-  const canSubmit = fullName.trim().length > 0 && EMAIL_RE.test(email) && password.length >= 8;
+  const canSubmit = fullName.trim().length > 0 && EMAIL_RE.test(email) && password.length >= 8 && consent;
 
   function markTouched(field: keyof typeof touched) {
     setTouched((t) => ({ ...t, [field]: true }));
@@ -34,7 +35,7 @@ export default function RegisterPage() {
     setError(null);
     setLoading(true);
     try {
-      await api.register({ full_name: fullName, email, password, role });
+      await api.register({ full_name: fullName, email, password, role, consent_given: consent });
       router.push("/login");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
@@ -106,6 +107,12 @@ export default function RegisterPage() {
             <option value="admin">Admin (temporary — remove after first use)</option>
           </SelectInput>
         </Field>
+        <Checkbox
+          required
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+          label="I consent to this service storing and processing my health information to generate risk assessments and support consultations."
+        />
         {error && <p className="text-sm font-medium text-danger-600">{error}</p>}
         <Button type="submit" disabled={loading || !canSubmit} className="mt-1 w-full">
           {loading ? "Creating account..." : "Register"}

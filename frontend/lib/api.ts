@@ -171,7 +171,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
-  async register(payload: { full_name: string; email: string; password: string; role: UserRole }) {
+  async register(payload: { full_name: string; email: string; password: string; role: UserRole; consent_given: boolean }) {
     return request("/api/v1/auth/register", { method: "POST", body: JSON.stringify(payload) });
   },
 
